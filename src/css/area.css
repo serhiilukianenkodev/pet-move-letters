@@ -1,0 +1,30 @@
+.area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 85vh;
+  background-color: #facade;
+  position: relative;
+}
+
+.letter {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  padding: 4px;
+  border: 1px solid greenyellow;
+
+  &.selected {
+    background-color: tomato;
+  }
+}
+
+.box {
+  width: 25px;
+  height: 25px;
+  background-color: #9e1a51;
+}
