@@ -1,13 +1,13 @@
 const refs = {
   formEl: document.querySelector('.form'),
   outputField: document.querySelector('.area'),
-  box: document.querySelector('.box'),
+  //   box: document.querySelector('.box'),
 };
 
 refs.formEl.addEventListener('submit', onFormSubmit);
 // refs.outputField.addEventListener('click', onLetterClick);
-// refs.outputField.addEventListener('drag', onLetterDrag);
-refs.box.addEventListener('mousedown', onMouseDown);
+refs.outputField.addEventListener('mousedown', onMouseDown);
+// refs.box.addEventListener('mousedown', onMouseDown);
 // refs.box.addEventListener('dragstart ', () => false);
 
 function onFormSubmit(e) {
@@ -22,76 +22,75 @@ function onFormSubmit(e) {
 function createLetters(text) {
   const markup = text
     .split('')
-    .map(letter => `<span class="letter">${letter}</span>`)
+    .map(letter => `<div class="letter">${letter}</div>`)
     .join('');
 
   refs.outputField.innerHTML = markup;
 }
 
-function onLetterClick(e) {
-  const currentEl = e.target;
-  if (e.target === e.currentTarget) return;
-
-  toggleSelection(currentEl);
-  console.log(currentEl);
-}
-
-function toggleSelection(el) {
-  if (el.classList.contains('selected')) {
-    el.classList.remove('selected');
-  } else {
-    el.classList.add('selected');
-  }
-
-  console.dir(el);
-}
-
-// function onLetterDrag(e) {
+// function onLetterClick(e) {
 //   const currentEl = e.target;
-//   console.log(currentEl);
-
 //   if (e.target === e.currentTarget) return;
 
-//   if (!currentEl.classList.contains('selected')) return;
+//   toggleSelection(currentEl);
+//   console.log(currentEl);
+// }
 
-//   const x = e.x;
-//   const y = e.y;
-//   console.dir(e);
-//   console.log('🚀 ~ onLetterDrag ~ x:', x);
-//   console.log('🚀 ~ onLetterDrag ~ y:', y);
-//   console.dir(currentEl);
-//   if (!e.y || !e.x) return;
-
-//   console.log(currentEl.offsetTop);
-//   console.log(currentEl.offsetLeft);
-
-//   currentEl.style.position = 'absolute';
-//   currentEl.style.top = `${y - 70 - 24}px`;
-//   currentEl.style.left = `${x - 24}px`;
-//   console.log(currentEl.style.position);
+// function toggleSelection(el) {
+//   if (el.classList.contains('selected')) {
+//     el.classList.remove('selected');
+//   } else {
+//     el.classList.add('selected');
+//   }
 // }
 
 function onMouseDown(e) {
   const currentEl = e.target;
-  console.log(currentEl);
+  // console.log(currentEl);
 
-  //   if (e.target === e.currentTarget) return;
+  if (e.target === e.currentTarget) return;
+
+  const boxLeftPos = currentEl.getBoundingClientRect().left;
+  const boxTopPos = currentEl.getBoundingClientRect().top;
+  // const boxRightPos = currentEl.getBoundingClientRect().right;
+  // const boxBottomPos = currentEl.getBoundingClientRect().bottom;
+  const boxWidth = currentEl.getBoundingClientRect().width;
+  const boxHeigth = currentEl.getBoundingClientRect().height;
+  const bodyWidth = refs.outputField.getBoundingClientRect().width;
+  const bodyHeight = refs.outputField.getBoundingClientRect().bottom;
+  // console.log(boxHeigth, boxWidth);
 
   //   if (!currentEl.classList.contains('selected')) return;
-  let shiftX = e.clientX - currentEl.getBoundingClientRect().left;
-  let shiftY = e.clientY - currentEl.getBoundingClientRect().top;
+  let shiftX = e.clientX - boxLeftPos;
+  let shiftY = e.clientY - boxTopPos;
 
   currentEl.style.position = 'absolute';
-  currentEl.style.zIndex = 1000;
-  document.body.append(currentEl);
+  //   currentEl.style.zIndex = 1000;
+  //   refs.outputField.append(currentEl);
 
-  moveAt(e.pageX, e.pageY);
+  //   moveAt(e.pageX, e.pageY);
 
   // переносимо м’яч на координати (pageX, pageY)
   // додатково враховуючи початковий зсув відносно курсору миші
   function moveAt(pageX, pageY) {
-    currentEl.style.left = pageX - shiftX + 'px';
-    currentEl.style.top = pageY - shiftY + 'px';
+    const leftPos = pageX - shiftX - 8;
+    const topPos = pageY - shiftY - 80;
+    const rightPos = leftPos + boxWidth;
+    const bottomPos = topPos + boxHeigth;
+    // console.log(leftPos, topPos, rightPos, bottomPos);
+
+    // console.log(bodyWidth, bodyHeight);
+
+    if (
+      leftPos < 0 ||
+      topPos < 0 ||
+      rightPos > bodyWidth ||
+      bottomPos > bodyHeight - 80
+    )
+      return;
+
+    currentEl.style.left = leftPos + 'px';
+    currentEl.style.top = topPos + 'px';
   }
 
   function onMouseMove(event) {
@@ -102,7 +101,7 @@ function onMouseDown(e) {
   document.addEventListener('mousemove', onMouseMove);
 
   // відпускаємо м’яч, видаляємо непотрібні обробники подій
-  currentEl.onmouseup = function () {
+  window.onmouseup = function () {
     document.removeEventListener('mousemove', onMouseMove);
     currentEl.onmouseup = null;
   };
